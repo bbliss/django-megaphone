@@ -1,0 +1,24 @@
+
+
+<script src="/static/megaphone/jug-application.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    //juggernaut initialization
+    var jug = new Juggernaut({
+      secure: ('https:' == document.location.protocol),
+      host: 'localhost',
+      port: 8080
+    });
+    jug.on('connect', function () {console.log('connected')});
+    jug.on('disconnect', function () {console.log('disconnected')});
+    jug.on('reconnect', function () {console.log('reconnecting')});
+    jug.subscribe("megaphone", function (data) {
+        console.log('data received:');
+        console.log(data);
+    });
+</script>
+
+<ul>
+{% for a in announcements %}
+    <li>{{a.main_text}}</li>
+{% endfor %}
+</ul>
