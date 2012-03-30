@@ -9,7 +9,7 @@
     jug.on('connect', function () {console.log('connected')});
     jug.on('disconnect', function () {console.log('disconnected')});
     jug.on('reconnect', function () {console.log('reconnecting')});
-    jug.subscribe("megaphone", function (data) {
+    jug.subscribe("megaphone{{site_id}}", function (data) {
         console.log('data received:');
         console.log(data);
     });

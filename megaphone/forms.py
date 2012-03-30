@@ -6,3 +6,15 @@ class AnnouncementForm(forms.ModelForm):
     class Meta:
         model = Announcement
         exclude = ('celery_task_id',)
+
+class SiteAnnouncementForm(forms.ModelForm):
+
+    class Meta:
+        model = Announcement
+        exclude = ('celery_task_id', 'sites')
+
+class NowAnnouncementForm(forms.ModelForm):
+
+    class Meta:
+        model = Announcement
+        exclude = ('celery_task_id', 'sites', 'pub_date')
