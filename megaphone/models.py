@@ -12,12 +12,16 @@ import datetime
 import redis
 import json
 
+from celery.task.control import revoke
+
 from megaphone.tasks import delayed_announcement
 
 class Announcement(models.Model):
     main_text = models.CharField(max_length=1000)
     pub_date = models.DateTimeField(default=timezone.now)
     sites = models.ManyToManyField(Site)
+
+    celery_task_id = models.CharField(max_length=100, blank=True)
 
     def __unicode__(self):
         return "Announcement: " + self.main_text[:80]
@@ -26,6 +30,7 @@ class Announcement(models.Model):
 
         # Once the announcement has been saved, either send it to Redis
         # immediately, or schedule a task to send it on the pub date.
+        
         if self.pub_date <= timezone.now():
             channels = []
             for site in self.sites.all():
@@ -37,4 +42,10 @@ class Announcement(models.Model):
             server.publish('juggernaut', json.dumps(msg, default=dthandler))
         else:
             msg = {'channels': ['megaphone'], 'data': [self.main_text, self.pub_date] }
-            delayed_announcement.apply_async(args=[msg], eta=self.pub_date)
+            self.celery_task_id = delayed_announcement.apply_async(args=[msg], eta=self.pub_date)
+        
+        super(Announcement, self).save()
+  
+    def delete(self):
+        super(Announcement, self).delete()
+        revoke(self.celery_task_id)

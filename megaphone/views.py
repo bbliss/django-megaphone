@@ -24,8 +24,6 @@ def announce(request):
     else:
         a_form = AnnouncementForm()
     
-    print "a_form:", a_form
-
     return render(request, 'megaphone/announce.html', {
         'a_form': a_form,
     })
