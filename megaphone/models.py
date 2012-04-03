@@ -1,6 +1,7 @@
 import datetime
 import redis
 import json
+import pytz
 
 from django.db import models
 from django.contrib.sites.models import Site
@@ -31,7 +32,7 @@ class Announcement(models.Model):
             celery_eta = datetime.datetime.now(tz=timezone.get_default_timezone())
             print "set eta to now plus 5 secs.", celery_eta
         else:
-            celery_eta = self.pub_date
+            celery_eta = self.pub_date.astimezone(pytz.utc)
             print "set eta to pub date.", celery_eta
 
         self.celery_task_id = send_announcement.apply_async(args=[self.id], eta=celery_eta)
