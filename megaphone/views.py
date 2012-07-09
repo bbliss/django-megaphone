@@ -49,7 +49,7 @@ def now_announce(request):
     site = get_current_site(request)
 
     if request.method == "POST":
-        a_form = NowAnnouncementForm()
+        a_form = NowAnnouncementForm(request.POST)
         if a_form.is_valid():
             a_form.cleaned_data['sites'] = [site.id]
             a_form.cleaned_data['pub_date'] = timezone.now()
