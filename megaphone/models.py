@@ -11,11 +11,14 @@ from django.conf import settings
 from celery.task.control import revoke
 from megaphone.tasks import send_announcement
 
+from broadcast.models import Show
+
 class Announcement(models.Model):
     main_text = models.CharField(max_length=1000)
     pub_date = models.DateTimeField(default=timezone.now)
     sites = models.ManyToManyField(Site)
     celery_task_id = models.CharField(max_length=100, blank=True)
+    show = models.ForeignKey(Show, blank=True, null=True)
 
     def __unicode__(self):
         return "Announcement: " + self.main_text[:80]
